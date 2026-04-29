@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Request Access — Ownership</title>
+  <meta name="description" content="Complete the final access request form, review what happens next, and send your details to the Ownership team or CRM.">
+  <meta name="robots" content="index,follow">
+  <meta property="og:title" content="Request Access — Ownership">
+  <meta property="og:description" content="The final step where the visitor confirms fit, shares details, and requests access.">
+  <meta property="og:type" content="website">
+  <link rel="stylesheet" href="css/styles.css">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "Request Access",
+    "description": "Final access request and CRM capture page for Ownership.",
+    "isPartOf": {"@type": "WebSite", "name": "Ownership"}
+  }
+  </script>
+</head>
+<body>
+  <div id="stars" class="stars-canvas" aria-hidden="true"></div>
+  <header class="site-header">
+    <div class="container">
+      <div class="brand">Ownership</div>
+      <nav class="nav-cta"><a class="cta" href="packages.html">Review packages</a></nav>
+    </div>
+  </header>
+
+  <main class="container page-content">
+    <section class="hero-panel">
+      <div>
+        <p class="eyebrow">Step 3 of 3</p>
+        <h1 class="page-title">Let's confirm the fit</h1>
+        <p class="lead">Share just the essentials. We'll review within 24 hours and follow up with your next steps.</p>
+      </div>
+      <div class="hero-note">
+        <strong>What happens now</strong>
+        <p>Your response gets reviewed for fit, then routed to the right person who'll reach out with specific next steps—not a generic template.</p>
+      </div>
+    </section>
+
+    <section class="benefit-strip" aria-label="Request benefits">
+      <article><strong>Fast review</strong><span>Usually within 24 hours.</span></article>
+      <article><strong>Better fit</strong><span>Only proceed if it makes sense.</span></article>
+      <article><strong>Clear outcome</strong><span>You get a specific next step.</span></article>
+    </section>
+
+    <section class="request-confidence">
+      <p class="eyebrow">This request is</p>
+      <ul class="confidence-list">
+        <li>✓ 100% confidential</li>
+        <li>✓ No obligation — just a review</li>
+        <li>✓ Reviewed by a real person, not a bot</li>
+      </ul>
+    </section>
+
+    <section class="proof-grid" aria-label="What this request delivers">
+      <article class="stat-card"><strong>Clarity</strong><span>We capture what the visitor wants, why it matters, and where the value is.</span></article>
+      <article class="stat-card"><strong>Qualification</strong><span>The form separates casual interest from serious intent before anyone follows up.</span></article>
+      <article class="stat-card"><strong>Repeatability</strong><span>This same structure can be reused over and over without changing the logic.</span></article>
+    </section>
+
+    <section class="detail-grid">
+      <article class="detail-card">
+        <p class="kicker">Your selection</p>
+        <h2 id="selectedTitle">Chosen package</h2>
+        <p id="selectedSummary">Pick a package first, then request access.</p>
+        <ul class="detail-list" id="selectedBullets"></ul>
+      </article>
+      <article class="detail-card">
+        <p class="kicker">Why people complete this step</p>
+        <h2>It turns interest into a clean decision.</h2>
+        <p>When the customer sees the next step, the outcome, and the reason for the question, they are much more likely to finish the form with confidence.</p>
+        <ul class="detail-list">
+          <li>Shows the visitor that the process is structured.</li>
+          <li>Makes the ask feel intentional instead of random.</li>
+          <li>Sets up a better follow-up conversation.</li>
+        </ul>
+      </article>
+    </section>
+
+    <form id="crmForm" class="crm-form">
+      <p class="form-intro"><strong>Step 1: The essentials</strong></p>
+      <div class="field"><label for="fullName">Full name <span class="required">*</span></label><input id="fullName" name="fullName" required placeholder="Your name"></div>
+      <div class="field"><label for="email">Email <span class="required">*</span></label><input id="email" name="email" type="email" required placeholder="name@example.com"></div>
+      <div class="field full"><label for="notes">What are you trying to achieve? <span class="required">*</span></label><textarea id="notes" name="notes" required placeholder="Explain your goal, your current challenge, and what a win looks like." rows="4"></textarea></div>
+      
+      <div class="form-section-divider">
+        <p class="form-intro"><strong>Step 2: Help us serve you better (optional)</strong></p>
+        <p class="form-subtext">The more we know, the better we can prepare for our conversation.</p>
+      </div>
+      
+      <div class="field"><label for="phone">Phone</label><input id="phone" name="phone" type="tel" placeholder="Best callback number"></div>
+      <div class="field"><label for="business">Business / Project</label><input id="business" name="business" placeholder="What should we call this?"></div>
+      <div class="field"><label for="vertical">Industry</label><input id="vertical" name="vertical" placeholder="Home services, ecommerce, coaching, etc."></div>
+      <div class="field"><label for="budget">Budget range</label><select id="budget" name="budget"><option value="">Select if relevant...</option><option>$500-$1,000</option><option>$1,000-$3,000</option><option>$3,000-$10,000</option><option>$10,000+</option></select></div>
+      <div class="field full"><label for="fit">What would make this a strong fit? (optional)</label><textarea id="fit" name="fit" placeholder="Tell us why this choice matters and what you want this to solve."></textarea></div>
+      
+      <div class="field"><label for="agree"><input id="agree" type="checkbox" name="agree"> I understand this is a review-based request, not an automatic approval.</label></div>
+      <div class="form-row">
+        <button type="submit" class="primary">Yes, move forward</button>
+        <button type="button" id="downloadBtn" class="ghost">Download capture</button>
+      </div>
+      <div class="helper-row">
+        <span class="helper-chip">Secure review flow</span>
+        <span class="helper-chip">CRM-ready output</span>
+        <span class="helper-chip">Mobile-friendly form</span>
+      </div>
+    </form>
+
+    <div id="result" class="result"></div>
+
+    <section class="faq-grid" aria-label="Frequently asked questions">
+      <article class="faq-card"><h3>What happens after I submit?</h3><p>Your request is summarized and sent through the serverless handler. If the endpoint is offline, it still saves locally as a fallback.</p></article>
+      <article class="faq-card"><h3>What does access mean?</h3><p>It means your request is reviewed for fit, then routed toward the right next step instead of a generic reply.</p></article>
+      <article class="faq-card"><h3>Can this be repeated many times?</h3><p>Yes. This flow is built to be reusable, with the same structure, same decision steps, and the same capture logic each time.</p></article>
+    </section>
+
+    <section>
+      <p class="eyebrow">What people see next</p>
+      <div class="proof-grid compact">
+        <article class="proof-card">
+          <p>We review the fit and route the request with context, instead of sending a vague auto-response.</p>
+          <cite>Better follow-up</cite>
+        </article>
+        <article class="proof-card">
+          <p>The team gets a cleaner picture of the goal, so the next conversation is faster and more useful.</p>
+          <cite>Less back-and-forth</cite>
+        </article>
+        <article class="proof-card">
+          <p>Each submission becomes a structured record, so the lead can be reviewed, searched, and followed up without chaos.</p>
+          <cite>Database-backed capture</cite>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <script src="js/app.js"></script>
+  <script>
+    (async function(){
+      await window.app.initStars('#stars');
+      const saved = window.app.storage.get('selectedPackage');
+      const form = document.getElementById('crmForm');
+      const result = document.getElementById('result');
+      const selectedTitle = document.getElementById('selectedTitle');
+      const selectedSummary = document.getElementById('selectedSummary');
+      const selectedBullets = document.getElementById('selectedBullets');
+
+      if (saved?.package) {
+        const pkg = saved.package;
+        selectedTitle.textContent = `${saved.gateway === 'launch' ? 'Launch' : saved.gateway === 'scale' ? 'Scale' : 'Strategic'} · ${pkg.name}`;
+        selectedSummary.textContent = `${pkg.price} · ${pkg.value}`;
+        selectedBullets.innerHTML = `
+          <li>${pkg.outcome}</li>
+          <li>This is the selected path that will be sent to review.</li>
+          <li>Use this form to add the context that makes the request stronger.</li>
+        `;
+      } else {
+        selectedBullets.innerHTML = '<li>No package selected yet.</li><li>Go back and choose a package to unlock the review step.</li>';
+      }
+
+      async function fallbackSave(data){
+        const ledger = window.app.storage.get('crmLedger', []);
+        ledger.push(data);
+        window.app.storage.set('crmLedger', ledger);
+        result.innerHTML = '<pre class="dump">'+JSON.stringify(data,null,2)+'</pre>';
+      }
+
+      form.addEventListener('submit', async e=>{
+        e.preventDefault();
+        if (!form.reportValidity()) return;
+        const data = Object.fromEntries(new FormData(form).entries());
+        data.gateway = saved?.gateway || localStorage.getItem('selectedGateway') || 'unknown';
+        data.package = saved?.package?.name || 'none';
+        data.timestamp = new Date().toISOString();
+        data.userAgent = navigator.userAgent;
+        data.viewport = `${window.innerWidth}x${window.innerHeight}`;
+
+        // try to POST to serverless endpoint; if it fails, fallback to local capture
+        try{
+          result.innerHTML = '<div class="dump">Submitting request…</div>';
+          const r = await fetch('/api/send', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ payload: data }) });
+          if (!r.ok) throw new Error('Server error');
+          const response = await r.json();
+          result.innerHTML = response.emailSent
+            ? '<div class="dump">Request submitted — the team has a structured copy of your request and the email was sent.</div>'
+            : '<div class="dump">Request submitted — stored in the database and queued for delivery.</div>';
+        } catch(err){
+          await fallbackSave(data);
+          alert('Could not reach server endpoint — saved locally as fallback.');
+        }
+      });
+
+      document.getElementById('downloadBtn').addEventListener('click', ()=>{
+        const ledger = JSON.stringify(window.app.storage.get('crmLedger', []), null, 2);
+        const blob = new Blob([ledger],{type:'application/json'});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a'); a.href=url; a.download='crm-capture.json'; a.click(); URL.revokeObjectURL(url);
+      });
+    })();
+  </script>
+</body>
+</html>
