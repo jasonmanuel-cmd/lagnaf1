@@ -24,101 +24,61 @@
     }catch(e){ console.warn('stars init failed',e); }
   };
 
-  // Pixelate rendering of a simple logo text into a canvas
-  app.pixelateLogo = function({canvasId='logoCanvas',duration=1200}={}){
+  // Pixelate rendering of logo.png image into a canvas
+  app.pixelateLogo = function({canvasId='logoCanvas',duration=1200,logoSrc='logo.png'}={}){
     return new Promise((resolve)=>{
       const canvas = document.getElementById(canvasId);
       if(!canvas){ resolve(); return; }
       const ctx = canvas.getContext('2d');
       const w = canvas.width; const h = canvas.height;
       ctx.fillStyle = '#031021'; ctx.fillRect(0,0,w,h);
-      // render a stylized mask-like mark inspired by the supplied artwork
-      function drawBase(){
-        ctx.clearRect(0,0,w,h);
-        const glow = ctx.createRadialGradient(w/2,h/2,w*0.08,w/2,h/2,w*0.5);
-        glow.addColorStop(0,'rgba(255,255,255,0.34)');
-        glow.addColorStop(0.45,'rgba(255,255,255,0.16)');
-        glow.addColorStop(1,'rgba(255,255,255,0)');
-        ctx.fillStyle = '#05080c'; ctx.fillRect(0,0,w,h);
-        ctx.fillStyle = glow; ctx.fillRect(0,0,w,h);
-
-        ctx.save();
-        ctx.translate(w/2,h*0.46);
-        ctx.fillStyle = '#cfd2d7';
-        ctx.beginPath();
-        ctx.ellipse(0, 0, w*0.24, h*0.28, 0, 0, Math.PI*2);
-        ctx.fill();
-
-        const faceShadow = ctx.createLinearGradient(-w*0.1,-h*0.2,w*0.15,h*0.2);
-        faceShadow.addColorStop(0,'rgba(0,0,0,0.35)');
-        faceShadow.addColorStop(1,'rgba(0,0,0,0)');
-        ctx.fillStyle = faceShadow;
-        ctx.beginPath();
-        ctx.ellipse(0, 0, w*0.24, h*0.28, 0, 0, Math.PI*2);
-        ctx.fill();
-
-        ctx.fillStyle = '#101114';
-        ctx.beginPath();
-        ctx.ellipse(-w*0.085, -h*0.03, w*0.03, h*0.013, 0, 0, Math.PI*2);
-        ctx.ellipse(w*0.085, -h*0.03, w*0.03, h*0.013, 0, 0, Math.PI*2);
-        ctx.fill();
-
-        ctx.strokeStyle = '#111'; ctx.lineWidth = w*0.01; ctx.lineCap = 'round';
-        ctx.beginPath(); ctx.moveTo(-w*0.02, h*0.01); ctx.lineTo(w*0.015, h*0.01); ctx.stroke();
-        ctx.beginPath(); ctx.moveTo(-w*0.03, h*0.085); ctx.quadraticCurveTo(0, h*0.105, w*0.03, h*0.085); ctx.stroke();
-
-        ctx.fillStyle = '#d7d7d7';
-        ctx.beginPath();
-        if (typeof ctx.roundRect === 'function') {
-          ctx.roundRect(-w*0.115, h*0.06, w*0.06, h*0.27, w*0.025);
-        } else {
-          ctx.rect(-w*0.115, h*0.06, w*0.06, h*0.27);
+      
+      // Load the actual logo image
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.onload = function(){
+        function drawBase(){
+          ctx.clearRect(0,0,w,h);
+          const glow = ctx.createRadialGradient(w/2,h/2,w*0.08,w/2,h/2,w*0.5);
+          glow.addColorStop(0,'rgba(255,255,255,0.34)');
+          glow.addColorStop(0.45,'rgba(255,255,255,0.16)');
+          glow.addColorStop(1,'rgba(255,255,255,0)');
+          ctx.fillStyle = '#05080c'; ctx.fillRect(0,0,w,h);
+          ctx.fillStyle = glow; ctx.fillRect(0,0,w,h);
+          
+          // Draw the logo image centered in the canvas
+          ctx.save();
+          ctx.translate(w/2,h/2);
+          const scale = Math.min(w,h) / Math.max(img.width,img.height) * 0.8;
+          ctx.scale(scale, scale);
+          ctx.drawImage(img,-img.width/2,-img.height/2);
+          ctx.restore();
         }
-        ctx.fill();
-        ctx.fillStyle = '#b7bcc5';
-        ctx.beginPath();
-        if (typeof ctx.roundRect === 'function') {
-          ctx.roundRect(-w*0.09, h*0.11, w*0.06, h*0.24, w*0.02);
-        } else {
-          ctx.rect(-w*0.09, h*0.11, w*0.06, h*0.24);
+        drawBase();
+        
+        // pixelate by drawing to small canvas then backscaled
+        const temp = document.createElement('canvas'); const tctx = temp.getContext('2d');
+        let start = performance.now();
+        function frame(now){
+          const elapsed = now - start; const p = Math.min(1, elapsed/duration);
+          // pixel size reduces from 28 -> 1 with a slightly slower cinematic reveal
+          const px = Math.max(1, Math.floor(30*(1-p) + 1*(p)));
+          temp.width = Math.max(2, Math.floor(w/px)); temp.height = Math.max(2, Math.floor(h/px));
+          tctx.clearRect(0,0,temp.width,temp.height); tctx.drawImage(canvas,0,0,temp.width,temp.height);
+          ctx.imageSmoothingEnabled = false; ctx.clearRect(0,0,w,h);
+          ctx.fillStyle = 'rgba(2,5,10,0.2)'; ctx.fillRect(0,0,w,h);
+          ctx.drawImage(temp,0,0,temp.width,temp.height,0,0,w,h);
+          ctx.fillStyle = `rgba(255,255,255,${Math.max(0, 0.12 - p * 0.12)})`;
+          ctx.fillRect(0, Math.floor((h * 0.2) + (Math.sin(now / 180) * 8)), w, 2);
+          if(p<1) requestAnimationFrame(frame); else resolve();
         }
-        ctx.fill();
-        ctx.fillStyle = '#ececec';
-        ctx.beginPath();
-        if (typeof ctx.roundRect === 'function') {
-          ctx.roundRect(-w*0.045, h*0.16, w*0.09, h*0.05, w*0.02);
-        } else {
-          ctx.rect(-w*0.045, h*0.16, w*0.09, h*0.05);
-        }
-        ctx.fill();
-        ctx.restore();
-
-        ctx.save();
-        ctx.translate(w/2,h*0.86);
-        ctx.fillStyle = 'rgba(255,255,255,0.9)';
-        ctx.font = `${Math.floor(w*0.09)}px sans-serif`;
-        ctx.textAlign='center'; ctx.textBaseline='middle';
-        ctx.fillText('OWNERSHIP', 0, 0);
-        ctx.restore();
-      }
-      drawBase();
-      // pixelate by drawing to small canvas then backscaled
-      const temp = document.createElement('canvas'); const tctx = temp.getContext('2d');
-      let start = performance.now();
-      function frame(now){
-        const elapsed = now - start; const p = Math.min(1, elapsed/duration);
-        // pixel size reduces from 28 -> 1 with a slightly slower cinematic reveal
-        const px = Math.max(1, Math.floor(30*(1-p) + 1*(p)));
-        temp.width = Math.max(2, Math.floor(w/px)); temp.height = Math.max(2, Math.floor(h/px));
-        tctx.clearRect(0,0,temp.width,temp.height); tctx.drawImage(canvas,0,0,temp.width,temp.height);
-        ctx.imageSmoothingEnabled = false; ctx.clearRect(0,0,w,h);
-        ctx.fillStyle = 'rgba(2,5,10,0.2)'; ctx.fillRect(0,0,w,h);
-        ctx.drawImage(temp,0,0,temp.width,temp.height,0,0,w,h);
-        ctx.fillStyle = `rgba(255,255,255,${Math.max(0, 0.12 - p * 0.12)})`;
-        ctx.fillRect(0, Math.floor((h * 0.2) + (Math.sin(now / 180) * 8)), w, 2);
-        if(p<1) requestAnimationFrame(frame); else resolve();
-      }
-      requestAnimationFrame(frame);
+        requestAnimationFrame(frame);
+      };
+      img.onerror = function(){
+        console.warn('Failed to load logo image, using fallback');
+        resolve();
+      };
+      img.src = logoSrc;
     });
   };
 
