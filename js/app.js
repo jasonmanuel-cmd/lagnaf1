@@ -24,58 +24,55 @@
     }catch(e){ console.warn('stars init failed',e); }
   };
 
-  // Pixelate rendering of logo.png image into a canvas
-  app.pixelateLogo = function({canvasId='logoCanvas',duration=1200,logoSrc='logo.png'}={}){
+  // Enhanced logo reveal with glow effect (no pixelation)
+  app.pixelateLogo = function({canvasId='logoCanvas',duration=2000,logoSrc='logo.png'}={}){
     return new Promise((resolve)=>{
       const canvas = document.getElementById(canvasId);
       if(!canvas){ resolve(); return; }
       const ctx = canvas.getContext('2d');
       const w = canvas.width; const h = canvas.height;
-      ctx.fillStyle = '#031021'; ctx.fillRect(0,0,w,h);
       
-      // Load the actual logo image
       const img = new Image();
       img.crossOrigin = 'anonymous';
       img.onload = function(){
-        function drawBase(){
-          ctx.clearRect(0,0,w,h);
-          const glow = ctx.createRadialGradient(w/2,h/2,w*0.08,w/2,h/2,w*0.5);
-          glow.addColorStop(0,'rgba(255,255,255,0.34)');
-          glow.addColorStop(0.45,'rgba(255,255,255,0.16)');
-          glow.addColorStop(1,'rgba(255,255,255,0)');
-          ctx.fillStyle = '#05080c'; ctx.fillRect(0,0,w,h);
-          ctx.fillStyle = glow; ctx.fillRect(0,0,w,h);
-          
-          // Draw the logo image centered in the canvas
-          ctx.save();
-          ctx.translate(w/2,h/2);
-          const scale = Math.min(w,h) / Math.max(img.width,img.height) * 0.8;
-          ctx.scale(scale, scale);
-          ctx.drawImage(img,-img.width/2,-img.height/2);
-          ctx.restore();
-        }
-        drawBase();
-        
-        // pixelate by drawing to small canvas then backscaled
-        const temp = document.createElement('canvas'); const tctx = temp.getContext('2d');
         let start = performance.now();
         function frame(now){
-          const elapsed = now - start; const p = Math.min(1, elapsed/duration);
-          // pixel size reduces from 28 -> 1 with a slightly slower cinematic reveal
-          const px = Math.max(1, Math.floor(30*(1-p) + 1*(p)));
-          temp.width = Math.max(2, Math.floor(w/px)); temp.height = Math.max(2, Math.floor(h/px));
-          tctx.clearRect(0,0,temp.width,temp.height); tctx.drawImage(canvas,0,0,temp.width,temp.height);
-          ctx.imageSmoothingEnabled = false; ctx.clearRect(0,0,w,h);
-          ctx.fillStyle = 'rgba(2,5,10,0.2)'; ctx.fillRect(0,0,w,h);
-          ctx.drawImage(temp,0,0,temp.width,temp.height,0,0,w,h);
-          ctx.fillStyle = `rgba(255,255,255,${Math.max(0, 0.12 - p * 0.12)})`;
-          ctx.fillRect(0, Math.floor((h * 0.2) + (Math.sin(now / 180) * 8)), w, 2);
-          if(p<1) requestAnimationFrame(frame); else resolve();
+          const elapsed = now - start;
+          const p = Math.min(1, elapsed / duration);
+          
+          ctx.clearRect(0, 0, w, h);
+          
+          // Animated background with radial gradient
+          const glow = ctx.createRadialGradient(w/2, h/2, w*0.05, w/2, h/2, w*0.55);
+          glow.addColorStop(0, `rgba(103,169,255,${0.25 * p})`);
+          glow.addColorStop(0.5, `rgba(49,208,198,${0.12 * p})`);
+          glow.addColorStop(1, 'rgba(255,255,255,0)');
+          ctx.fillStyle = glow;
+          ctx.fillRect(0, 0, w, h);
+          
+          // Scale and fade in the logo smoothly
+          ctx.save();
+          ctx.globalAlpha = Math.min(1, p * 1.2);
+          const scale = 0.7 + (p * 0.3);
+          ctx.translate(w/2, h/2);
+          ctx.scale(scale, scale);
+          ctx.drawImage(img, -img.width/2, -img.height/2);
+          ctx.restore();
+          
+          // Add subtle glow ring that pulses
+          ctx.strokeStyle = `rgba(103,169,255,${Math.max(0, (0.3 - p*0.3) * (1 + Math.sin(elapsed/200)*0.2))})`;
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.arc(w/2, h/2, (w*0.35) + (Math.sin(elapsed/300)*8), 0, Math.PI*2);
+          ctx.stroke();
+          
+          if(p < 1) requestAnimationFrame(frame);
+          else resolve();
         }
         requestAnimationFrame(frame);
       };
       img.onerror = function(){
-        console.warn('Failed to load logo image, using fallback');
+        console.warn('Failed to load logo image');
         resolve();
       };
       img.src = logoSrc;
@@ -89,6 +86,39 @@
     set(key, value){
       localStorage.setItem(key, JSON.stringify(value));
     }
+  };
+
+  // Handle card selection with visual feedback
+  app.initCardSelection = function(selector, storageKey, callback) {
+    const cards = document.querySelectorAll(selector);
+    cards.forEach(card => {
+      card.addEventListener('click', (e) => {
+        e.preventDefault();
+        cards.forEach(c => c.classList.remove('selected'));
+        card.classList.add('selected');
+        const value = card.getAttribute('data-path') || card.getAttribute('data-value');
+        app.storage.set(storageKey, value);
+        
+        if (callback) callback(value, card);
+        
+        // Highlight and scroll to button
+        const nextButton = document.querySelector('[role="button"][href], button');
+        if (nextButton) {
+          nextButton.style.animation = 'none';
+          setTimeout(() => {
+            nextButton.style.animation = 'pulse 1.5s ease-in-out 3';
+            nextButton.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }, 100);
+        }
+      });
+      
+      // Restore previously selected
+      const saved = app.storage.get(storageKey);
+      const cardValue = card.getAttribute('data-path') || card.getAttribute('data-value');
+      if (saved === cardValue) {
+        card.classList.add('selected');
+      }
+    });
   };
 
   app.slugify = function(value) {

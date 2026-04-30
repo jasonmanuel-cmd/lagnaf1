@@ -35,6 +35,22 @@
   </header>
 
   <main id="main" class="container page-content">
+    <div class="step-progress">
+      <div class="step-indicator">
+        <div class="step-number completed">1</div>
+        <span class="step-label">Gateway</span>
+      </div>
+      <div class="step-divider"></div>
+      <div class="step-indicator">
+        <div class="step-number active">2</div>
+        <span class="step-label">Select Package</span>
+      </div>
+      <div class="step-divider"></div>
+      <div class="step-indicator">
+        <div class="step-number">3</div>
+        <span class="step-label">Request Access</span>
+      </div>
+    </div>
     <section class="hero-panel">
       <div>
         <p class="eyebrow">Step 2 of 3</p>
@@ -230,19 +246,31 @@
       const modalBody = document.getElementById('packageModalBody');
       let selectedPackage = null;
       meta.packages.forEach(p => {
-        const b = document.createElement('button'); b.className='card'; b.dataset.pkg = p.id; b.innerHTML = `<strong>${p.name}</strong><span class="price">${p.price}</span><span>${p.value}</span><ul><li>${p.outcome}</li><li>Best for users who want a ${p.name.toLowerCase()} level of support.</li></ul>`;
-        b.addEventListener('click', ()=>{
+        const b = document.createElement('button');
+        b.className = 'card';
+        b.dataset.pkg = p.id;
+        b.setAttribute('data-value', p.id);
+        b.innerHTML = `<strong>${p.name}</strong><span class="price">${p.price}</span><span>${p.value}</span><ul><li>${p.outcome}</li><li>Best for users who want a ${p.name.toLowerCase()} level of support.</li></ul>`;
+        b.addEventListener('click', (e) => {
+          e.preventDefault();
+          grid.querySelectorAll('.card').forEach(c => c.classList.remove('selected'));
+          b.classList.add('selected');
           selectedPackage = p;
           modalTitle.textContent = `${p.name} package`;
           modalBody.textContent = `${p.price} · ${p.value} · ${p.outcome}`;
-          modal.classList.add('open');
-          modal.setAttribute('aria-hidden','false');
+          setTimeout(() => {
+            modal.classList.add('open');
+            modal.setAttribute('aria-hidden', 'false');
+          }, 200);
         });
         grid.appendChild(b);
       });
       document.getElementById('packageModalBack').addEventListener('click', ()=>{
         modal.classList.remove('open');
-        modal.setAttribute('aria-hidden','true');
+        modal.setAttribute('aria-hidden', 'true');
+        if (grid.querySelector('.card.selected')) {
+          grid.querySelector('.card.selected').classList.remove('selected');
+        }
       });
       document.getElementById('packageModalContinue').addEventListener('click', ()=>{
         if(!selectedPackage) return;

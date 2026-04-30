@@ -35,6 +35,22 @@
   </header>
 
   <main id="main" class="container page-content">
+    <div class="step-progress">
+      <div class="step-indicator">
+        <div class="step-number active">1</div>
+        <span class="step-label">Choose Gateway</span>
+      </div>
+      <div class="step-divider"></div>
+      <div class="step-indicator">
+        <div class="step-number">2</div>
+        <span class="step-label">Select Package</span>
+      </div>
+      <div class="step-divider"></div>
+      <div class="step-indicator">
+        <div class="step-number">3</div>
+        <span class="step-label">Request Access</span>
+      </div>
+    </div>
     <section class="hero-panel">
       <div>
         <p class="eyebrow">Step 1 of 3</p>
@@ -96,7 +112,7 @@
       <p class="eyebrow">Who you're working with</p>
       <div class="founder-card">
         <div class="founder-badge">
-          <div class="founder-initial">J</div>
+          <img src="founder.jpg" alt="Jason M." />
         </div>
         <div class="founder-details">
           <h3>Jason M.</h3>
@@ -255,18 +271,27 @@
       const grid = document.getElementById('gatewayGrid');
       const modal = document.getElementById('gateModal');
       let chosen = null;
-      grid.addEventListener('click', e => {
-        const btn = e.target.closest('button.card');
-        if(!btn) return;
-        chosen = btn.dataset.path;
-        document.getElementById('modalTitle').textContent = btn.querySelector('strong').textContent;
-        document.getElementById('modalQuestion').textContent = 'Do you want to enter the "' + btn.querySelector('strong').textContent + '" doorway?';
-        modal.classList.add('open'); modal.setAttribute('aria-hidden','false');
+      
+      // Initialize card selection with visual feedback
+      app.initCardSelection('.gateways .card', 'selectedGateway', (value, card) => {
+        chosen = value;
+        document.getElementById('modalTitle').textContent = card.querySelector('strong').textContent;
+        document.getElementById('modalQuestion').textContent = 'Do you want to enter the "' + card.querySelector('strong').textContent + '" doorway?';
+        setTimeout(() => {
+          modal.classList.add('open');
+          modal.setAttribute('aria-hidden', 'false');
+        }, 300);
       });
-      document.getElementById('modalNo').addEventListener('click', ()=>{ modal.classList.remove('open'); modal.setAttribute('aria-hidden','true'); });
+      
+      document.getElementById('modalNo').addEventListener('click', ()=>{
+        if(grid.querySelector('.card.selected')) {
+          grid.querySelector('.card.selected').classList.remove('selected');
+        }
+        modal.classList.remove('open');
+        modal.setAttribute('aria-hidden', 'true');
+      });
       document.getElementById('modalYes').addEventListener('click', ()=>{
-        localStorage.setItem('selectedGateway', chosen);
-        window.location.href = 'packages.html?gateway='+encodeURIComponent(chosen);
+        window.location.href = 'packages.html?gateway=' + encodeURIComponent(chosen);
       });
     })();
   </script>

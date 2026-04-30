@@ -73,15 +73,15 @@
 
   <script src="js/app.js"></script>
   <script>
-    // Start splash sequence
+    // Enhanced splash sequence with better wow effect
     (async function(){
       await window.app.initStars('#stars');
       await window.app.pixelateLogo({canvasId:'logoCanvas',duration:2200});
-      // fade text and then redirect
+      // fade text with staggered animation
       document.getElementById('splashText').classList.add('visible');
-      await new Promise(r=>setTimeout(r,1800));
+      await new Promise(r=>setTimeout(r,2000));
       document.getElementById('splash').classList.add('dismiss');
-      await new Promise(r=>setTimeout(r,900));
+      await new Promise(r=>setTimeout(r,800));
       window.location.href = 'gateway.html';
     })();
   </script>
